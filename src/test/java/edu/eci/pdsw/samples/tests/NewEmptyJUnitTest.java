@@ -16,13 +16,11 @@
  */
 package edu.eci.pdsw.samples.tests;
 
-import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
-import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
 import edu.eci.pdsw.samples.entities.Consulta;
 import edu.eci.pdsw.samples.entities.Paciente;
 import edu.eci.pdsw.samples.services.ServiceFacadeException;
 import edu.eci.pdsw.samples.services.ServicesFacade;
-import java.util.Date;
+import java.sql.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.Before;
@@ -48,7 +46,7 @@ public class NewEmptyJUnitTest {
         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
         
         ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
-        Paciente p = new Paciente(1013622878, "sada", "Cesar Vega", sqlDate);
+        Paciente p = new Paciente(1013622878, "CC", "Cesar Vega", sqlDate);
         Set<Consulta> consultas=new LinkedHashSet<>();
         Consulta c;
         c = new Consulta(sqlDate, "Esta muy mal");
@@ -58,9 +56,9 @@ public class NewEmptyJUnitTest {
         p.setConsultas(consultas);
         f.registrarNuevoPaciente(p);
         
-        System.out.println(p.getId());
-        System.out.println(f.consultarPaciente(p.getId(), p.getTipo_id()).getId());
-        assertTrue("son iguales",p.getId() == f.consultarPaciente(p.getId(), p.getTipo_id()).getId() );
+        Paciente pa = f.consultarPaciente(p.getId(), p.getTipo_id());
+
+        assertTrue("son iguales",p.getId() == pa.getId());
     }
     
     @Test
@@ -68,7 +66,7 @@ public class NewEmptyJUnitTest {
         ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
         java.util.Date utilDate = new java.util.Date();
         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-        Paciente p = new Paciente(101362133, "sdasd", "assad Vega", sqlDate);
+        Paciente p = new Paciente(101362133, "CC", "assad Vega", sqlDate);
         Set<Consulta> consultas=new LinkedHashSet<>();
         p.setConsultas(consultas);
         f.registrarNuevoPaciente(p);
@@ -78,9 +76,84 @@ public class NewEmptyJUnitTest {
         c = new Consulta(sqlDate, "Siguio mal otro que esta mal");
         consultas.add(c);
         f.agregarConsultaAPaciente(p.getId(), p.getTipo_id(), c);
-        System.out.println(p.getConsultas().toArray());
-        System.out.println(f.consultarPaciente(p.getId(), p.getTipo_id()).getConsultas().toArray());
-        assertTrue("son iguales",p.getConsultas() == f.consultarPaciente(p.getId(), p.getTipo_id()).getConsultas());
+
+        assertTrue("son iguales",p.getConsultas().size() == f.consultarPaciente(p.getId(), p.getTipo_id()).getConsultas().size());
     }
     
+    @Test
+    public void registroPacienteSinConsulta() throws ServiceFacadeException{
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+        
+        ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
+        Paciente p = new Paciente(2131233, "CC", "Cesar Vega", sqlDate);
+
+        f.registrarNuevoPaciente(p);
+        
+        Paciente pa = f.consultarPaciente(p.getId(), p.getTipo_id());
+
+        assertTrue("son iguales",p.getId() == pa.getId());
+    }
+    
+    @Test
+    public void cargarPacienteSinConsulta() throws ServiceFacadeException{
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+        
+        ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
+        
+        Paciente p = new Paciente(12312312, "CC", "Cesar Vega", sqlDate);
+
+        Paciente pa = f.consultarPaciente(p.getId(), p.getTipo_id());
+        
+        assertTrue("son iguales",p.getConsultas().size()==0);
+    }
+
+    @Test
+    public void registroPacienteFechaInvalida() throws ServiceFacadeException{
+        
+        ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
+        
+        Paciente p = new Paciente(12312312, "CC", "Cesar Vega", new Date(2020, 23, 12));
+
+        Paciente pa = f.consultarPaciente(p.getId(), p.getTipo_id());
+        
+        assertTrue("son iguales",true);
+    }
+    
+    @Test
+    public void registroPacienteFechaConsultaInvalida() throws ServiceFacadeException{
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+        
+        ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
+        
+        Paciente p = new Paciente(12312312, "CC", "Cesar Vega", sqlDate);
+        Set<Consulta> consultas=new LinkedHashSet<>();
+        Consulta c;
+        c = new Consulta(new Date(2121, 12, 12), "Esta muy mal");
+        consultas.add(c);
+        
+        f.agregarConsultaAPaciente(p.getId(), p.getTipo_id(), c);
+        assertTrue("son iguales",true);
+    }
+    
+    @Test
+    public void registroPacienteFechaConsultaInvalida__() throws ServiceFacadeException{
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+        
+        ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
+        
+        Paciente p = new Paciente(12312312, "CC", "Cesar Vega", sqlDate);
+        
+        Set<Consulta> consultas=new LinkedHashSet<>();
+        Consulta c;
+        c = new Consulta(new Date(1111, 12, 12), "Esta muy mal");
+        consultas.add(c);
+        
+        f.agregarConsultaAPaciente(p.getId(), p.getTipo_id(), c);
+        
+        assertTrue("son iguales",true);
+    }
 }
