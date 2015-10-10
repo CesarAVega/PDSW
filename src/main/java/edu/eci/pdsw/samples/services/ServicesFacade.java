@@ -68,11 +68,13 @@ public class ServicesFacade {
         DaoFactory daof=DaoFactory.getInstance(properties);
         try {
             daof.beginSession();
+            
             Paciente p=daof.getDaoPaciente().load(idPaciente, tipoid);
+            
             daof.endSession();
             return p;
         } catch (PersistenceException ex) {
-            throw new ServiceFacadeException("Error al consultar paciente.",ex);
+            throw new ServiceFacadeException("Error al consultar paciente. 1",ex);
         }
     }
     
@@ -88,10 +90,12 @@ public class ServicesFacade {
         DaoFactory daof=DaoFactory.getInstance(properties);
         try {
             daof.beginSession();
+            
             daof.getDaoPaciente().save(p);
+            
             daof.endSession();
         } catch (PersistenceException ex) {
-            throw new ServiceFacadeException("Error al consultar paciente.",ex);
+            throw new ServiceFacadeException("Error al consultar paciente. 2",ex);
         }
     }
     
@@ -106,10 +110,15 @@ public class ServicesFacade {
         DaoFactory daof=DaoFactory.getInstance(properties);
         try {
             daof.beginSession();
-            daof.getDaoPaciente().load(idPaciente, tipoid);
+            Paciente p = consultarPaciente(idPaciente, tipoid);
+            
+            p.getConsultas().add(c);
+            
+            daof.getDaoPaciente().update(p);
+            
             daof.endSession();
         } catch (PersistenceException ex) {
-            throw new ServiceFacadeException("Error al consultar paciente.",ex);
+            throw new ServiceFacadeException("Error al consultar paciente. 3",ex);
         }
     }
     

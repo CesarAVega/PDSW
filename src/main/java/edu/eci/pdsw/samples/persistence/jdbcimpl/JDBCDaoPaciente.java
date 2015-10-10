@@ -82,15 +82,18 @@ public class JDBCDaoPaciente implements DaoPaciente {
     public void save(Paciente p) throws PersistenceException {
         PreparedStatement ps;
         try {
-            ps = con.prepareStatement("insert into PACIENTES (id,tipo_id,nombre,fecha_nacimiento) values (?,?,?,?)");
+            ps = con.prepareStatement("insert into PACIENTES (id, tipo_id, nombre, fecha_nacimiento) values (?,?,?,?)");
             ps.setInt(1, p.getId());
             ps.setString(2, p.getTipo_id());
             ps.setString(3, p.getNombre());
             ps.setDate(4, p.getFechaNacimiento());
+            
             ps.execute();
             
             ps = con.prepareStatement("insert into CONSULTAS (fecha_y_hora, resumen, PACIENTES_id, PACIENTES_tipo_id) values (?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+            
             for (Consulta c:p.getConsultas()){
+                
                 ps.setDate(1, c.getFechayHora());
                 ps.setString(2, c.getResumen());
                 ps.setInt(3, p.getId());
@@ -104,7 +107,7 @@ public class JDBCDaoPaciente implements DaoPaciente {
             }
             
         } catch (SQLException ex) {
-            throw new PersistenceException("An error ocurred while loading a product.",ex);
+            throw new PersistenceException("An error ocurred while loading a product. *",ex);
         }
 
     }

@@ -32,7 +32,13 @@ import static org.junit.Assert.*;
  * @author hcadavid
  */
 public class NewEmptyJUnitTest {
-    
+    java.util.Date utilDate = new java.util.Date();
+    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+    ServicesFacade f;
+    Paciente p, pa;
+    Set<Consulta> consultas;
+    Consulta c;
+            
     public NewEmptyJUnitTest() {
     }
     
@@ -42,39 +48,53 @@ public class NewEmptyJUnitTest {
     
     @Test
     public void registroPacienteTest() throws ServiceFacadeException{
-        java.util.Date utilDate = new java.util.Date();
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
         
-        ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
-        Paciente p = new Paciente(1013622878, "CC", "Cesar Vega", sqlDate);
-        Set<Consulta> consultas=new LinkedHashSet<>();
-        Consulta c;
+        f = ServicesFacade.getInstance("CofigAlter.properties");
+        
+        p = new Paciente(1013622878, "CC", "Cesar Vega", sqlDate);
+        
+        consultas=new LinkedHashSet<>();
+        
         c = new Consulta(sqlDate, "Esta muy mal");
+        
         consultas.add(c);
+        
         c = new Consulta(sqlDate, "Siguio mal");
+        
         consultas.add(c);
+        
         p.setConsultas(consultas);
+        
         f.registrarNuevoPaciente(p);
         
-        Paciente pa = f.consultarPaciente(p.getId(), p.getTipo_id());
+        pa = f.consultarPaciente(p.getId(), p.getTipo_id());
 
         assertTrue("son iguales",p.getId() == pa.getId());
     }
     
     @Test
     public void registroConsultaTest() throws ServiceFacadeException{
-        ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
-        java.util.Date utilDate = new java.util.Date();
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+        
+        f = ServicesFacade.getInstance("CofigAlter.properties");
+        
         Paciente p = new Paciente(101362133, "CC", "assad Vega", sqlDate);
-        Set<Consulta> consultas=new LinkedHashSet<>();
+        
+        consultas=new LinkedHashSet<>();
+        
+        c = new Consulta(sqlDate, "Esta muy ");
+        
+        consultas.add(c);
+        
         p.setConsultas(consultas);
+        
         f.registrarNuevoPaciente(p);
-        Consulta c = new Consulta(sqlDate, "Esta muy mal otro que esta mal");
-        consultas.add(c);
+        
+        c = new Consulta(sqlDate, "Esta muy mal otro que esta mal");
+        
         f.agregarConsultaAPaciente(p.getId(), p.getTipo_id(), c);
+        
         c = new Consulta(sqlDate, "Siguio mal otro que esta mal");
-        consultas.add(c);
+        
         f.agregarConsultaAPaciente(p.getId(), p.getTipo_id(), c);
 
         assertTrue("son iguales",p.getConsultas().size() == f.consultarPaciente(p.getId(), p.getTipo_id()).getConsultas().size());
@@ -142,22 +162,30 @@ public class NewEmptyJUnitTest {
     
     @Test
     public void registroPacienteFechaConsultaInvalida__() throws ServiceFacadeException{
-        java.util.Date utilDate = new java.util.Date();
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
         
         ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
         
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+        
         Paciente p = new Paciente(12312312, "CC", "Cesar Vega", sqlDate);
+        
+        Set<Consulta> consultas=new LinkedHashSet<>();
+        
+        Consulta c;
+        
+        c = new Consulta(new Date(1111, 12, 12), "Esta muy mal");
+        
+        consultas.add(c);
+        
+        p.setConsultas(consultas);
         
         f.registrarNuevoPaciente(p);
         
-        Set<Consulta> consultas=new LinkedHashSet<>();
-        Consulta c;
-        c = new Consulta(new Date(1111, 12, 12), "Esta muy mal");
-        consultas.add(c);
+        c = new Consulta(new Date(1233, 12, 12), "Esta muy mal");
         
         f.agregarConsultaAPaciente(p.getId(), p.getTipo_id(), c);
         
-        assertTrue("son iguales",true);
+        assertTrue("son iguales",p.getConsultas().size()==1);
     }
 }
