@@ -58,7 +58,7 @@ public class ServicesFacade {
     }
 
     /**
-     * Konsultar un paSiente dado su identificador.
+     * Consultar un pasiente dado su identificador.
      * @param idPaciente identificador del paciente
      * @param tipoid tipo de identificación del paciente
      * @return el paciente con el identificador dado

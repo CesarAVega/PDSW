@@ -104,9 +104,9 @@ public class NewEmptyJUnitTest {
         
         Paciente p = new Paciente(12312312, "CC", "Cesar Vega", sqlDate);
 
-        Paciente pa = f.consultarPaciente(p.getId(), p.getTipo_id());
+        f.registrarNuevoPaciente(p);
         
-        assertTrue("son iguales",p.getConsultas().size()==0);
+        assertTrue("son iguales", f.consultarPaciente(p.getId(), p.getTipo_id()).getConsultas().size() == 0);
     }
 
     @Test
@@ -115,8 +115,8 @@ public class NewEmptyJUnitTest {
         ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
         
         Paciente p = new Paciente(12312312, "CC", "Cesar Vega", new Date(2020, 23, 12));
-
-        Paciente pa = f.consultarPaciente(p.getId(), p.getTipo_id());
+        
+        f.registrarNuevoPaciente(p);
         
         assertTrue("son iguales",true);
     }
@@ -129,6 +129,8 @@ public class NewEmptyJUnitTest {
         ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
         
         Paciente p = new Paciente(12312312, "CC", "Cesar Vega", sqlDate);
+        f.registrarNuevoPaciente(p);
+        
         Set<Consulta> consultas=new LinkedHashSet<>();
         Consulta c;
         c = new Consulta(new Date(2121, 12, 12), "Esta muy mal");
@@ -146,6 +148,8 @@ public class NewEmptyJUnitTest {
         ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
         
         Paciente p = new Paciente(12312312, "CC", "Cesar Vega", sqlDate);
+        
+        f.registrarNuevoPaciente(p);
         
         Set<Consulta> consultas=new LinkedHashSet<>();
         Consulta c;
