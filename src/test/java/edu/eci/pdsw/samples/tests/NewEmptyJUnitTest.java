@@ -16,6 +16,15 @@
  */
 package edu.eci.pdsw.samples.tests;
 
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
+import edu.eci.pdsw.samples.entities.Consulta;
+import edu.eci.pdsw.samples.entities.Paciente;
+import edu.eci.pdsw.samples.services.ServiceFacadeException;
+import edu.eci.pdsw.samples.services.ServicesFacade;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -34,13 +43,44 @@ public class NewEmptyJUnitTest {
     }
     
     @Test
-    public void registroPacienteTest(){
+    public void registroPacienteTest() throws ServiceFacadeException{
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
         
+        ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
+        Paciente p = new Paciente(1013622878, "sada", "Cesar Vega", sqlDate);
+        Set<Consulta> consultas=new LinkedHashSet<>();
+        Consulta c;
+        c = new Consulta(sqlDate, "Esta muy mal");
+        consultas.add(c);
+        c = new Consulta(sqlDate, "Siguio mal");
+        consultas.add(c);
+        p.setConsultas(consultas);
+        f.registrarNuevoPaciente(p);
+        
+        System.out.println(p.getId());
+        System.out.println(f.consultarPaciente(p.getId(), p.getTipo_id()).getId());
+        assertTrue("son iguales",p.getId() == f.consultarPaciente(p.getId(), p.getTipo_id()).getId() );
     }
     
     @Test
-    public void registroConsultaTest(){
-        
+    public void registroConsultaTest() throws ServiceFacadeException{
+        ServicesFacade f = ServicesFacade.getInstance("CofigAlter.properties");
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+        Paciente p = new Paciente(101362133, "sdasd", "assad Vega", sqlDate);
+        Set<Consulta> consultas=new LinkedHashSet<>();
+        p.setConsultas(consultas);
+        f.registrarNuevoPaciente(p);
+        Consulta c = new Consulta(sqlDate, "Esta muy mal otro que esta mal");
+        consultas.add(c);
+        f.agregarConsultaAPaciente(p.getId(), p.getTipo_id(), c);
+        c = new Consulta(sqlDate, "Siguio mal otro que esta mal");
+        consultas.add(c);
+        f.agregarConsultaAPaciente(p.getId(), p.getTipo_id(), c);
+        System.out.println(p.getConsultas().toArray());
+        System.out.println(f.consultarPaciente(p.getId(), p.getTipo_id()).getConsultas().toArray());
+        assertTrue("son iguales",p.getConsultas() == f.consultarPaciente(p.getId(), p.getTipo_id()).getConsultas());
     }
     
 }

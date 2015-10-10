@@ -86,11 +86,10 @@ public class JDBCDaoPaciente implements DaoPaciente {
             ps.setInt(1, p.getId());
             ps.setString(2, p.getTipo_id());
             ps.setString(3, p.getNombre());
-            ps.setDate(4, p.getFechaNacimiento());            
+            ps.setDate(4, p.getFechaNacimiento());
             ps.execute();
             
-            ps = con.prepareStatement("insert into CONSULTAS (fecha_y_hora,resumen,PACIENTES_id,PACIENTES_tipo_id) values (?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
-                     
+            ps = con.prepareStatement("insert into CONSULTAS (fecha_y_hora, resumen, PACIENTES_id, PACIENTES_tipo_id) values (?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
             for (Consulta c:p.getConsultas()){
                 ps.setDate(1, c.getFechayHora());
                 ps.setString(2, c.getResumen());
@@ -137,5 +136,6 @@ public class JDBCDaoPaciente implements DaoPaciente {
             throw new PersistenceException("An error ocurred while loading a product.",ex);
         }        
     }
+    
     
 }

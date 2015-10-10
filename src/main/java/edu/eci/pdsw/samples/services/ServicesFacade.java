@@ -67,7 +67,6 @@ public class ServicesFacade {
     public Paciente consultarPaciente(int idPaciente,String tipoid) throws ServiceFacadeException{
         DaoFactory daof=DaoFactory.getInstance(properties);
         try {
-            System.out.println("Entró acá!");
             daof.beginSession();
             Paciente p=daof.getDaoPaciente().load(idPaciente, tipoid);
             daof.endSession();
@@ -81,11 +80,19 @@ public class ServicesFacade {
     /**
      * Registra un nuevo paciente en el sistema
      * @param p El nuevo paciente
+     * @throws edu.eci.pdsw.samples.services.ServiceFacadeException
      * @throws ServicesFacadeException si se presenta algún error lógico
      * o de persistencia (por ejemplo, si el paciente ya existe).
      */
     public void registrarNuevoPaciente(Paciente p) throws ServiceFacadeException{
-       
+        DaoFactory daof=DaoFactory.getInstance(properties);
+        try {
+            daof.beginSession();
+            daof.getDaoPaciente().save(p);
+            daof.endSession();
+        } catch (PersistenceException ex) {
+            throw new ServiceFacadeException("Error al consultar paciente.",ex);
+        }
     }
     
     /**
@@ -93,9 +100,17 @@ public class ServicesFacade {
      * @param idPaciente el identificador del paciente
      * @param tipoid el tipo de identificación
      * @param c la consulta a ser agregada
+     * @throws edu.eci.pdsw.samples.services.ServiceFacadeException
      */
-    public void agregarConsultaAPaciente(int idPaciente,String tipoid,Consulta c){
-        
+    public void agregarConsultaAPaciente(int idPaciente,String tipoid,Consulta c)throws ServiceFacadeException{
+        DaoFactory daof=DaoFactory.getInstance(properties);
+        try {
+            daof.beginSession();
+            daof.getDaoPaciente().load(idPaciente, tipoid);
+            daof.endSession();
+        } catch (PersistenceException ex) {
+            throw new ServiceFacadeException("Error al consultar paciente.",ex);
+        }
     }
     
 }
